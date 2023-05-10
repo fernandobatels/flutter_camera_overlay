@@ -10,22 +10,25 @@ class OverlayShape extends StatelessWidget {
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context);
     var size = media.size;
-    double width = media.orientation == Orientation.portrait
-        ? size.shortestSide * .9
-        : size.longestSide * .5;
-
     double ratio = model.ratio as double;
+
+    double width = size.shortestSide * .9;
     double height = width / ratio;
+
+    if (model.orientation == OverlayOrientation.landscape) {
+      height = size.longestSide * .7;
+      width = height / ratio;
+    }
+
     double radius =
         model.cornerRadius == null ? 0 : model.cornerRadius! * height;
-    if (media.orientation == Orientation.portrait) {}
     return Stack(
       children: [
         Align(
             alignment: Alignment.center,
             child: Container(
               width: width,
-              height: width / ratio,
+              height: height,
               decoration: ShapeDecoration(
                   color: Colors.transparent,
                   shape: RoundedRectangleBorder(
@@ -44,7 +47,7 @@ class OverlayShape extends StatelessWidget {
                   alignment: Alignment.center,
                   child: Container(
                     width: width,
-                    height: width / ratio,
+                    height: height,
                     decoration: BoxDecoration(
                         color: Colors.black,
                         borderRadius: BorderRadius.circular(radius)),
