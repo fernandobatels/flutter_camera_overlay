@@ -8,20 +8,18 @@ typedef XFileCallback = void Function(XFile file);
 
 class CameraOverlay extends StatefulWidget {
   const CameraOverlay(
-    this.camera,
+    this.controller,
     this.model,
     this.onCapture, {
     Key? key,
-    this.flash = false,
     this.enableCaptureButton = true,
     this.label,
     this.info,
     this.loadingWidget,
     this.infoMargin,
   }) : super(key: key);
-  final CameraDescription camera;
+  final CameraController controller;
   final OverlayModel model;
-  final bool flash;
   final bool enableCaptureButton;
   final XFileCallback onCapture;
   final String? label;
@@ -36,23 +34,9 @@ class CameraOverlay extends StatefulWidget {
 class _FlutterCameraOverlayState extends State<CameraOverlay> {
   _FlutterCameraOverlayState();
 
-  late CameraController controller;
-
-  @override
-  void initState() {
-    super.initState();
-    controller = CameraController(widget.camera, ResolutionPreset.max);
-    controller.initialize().then((_) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {});
-    });
-  }
-
   @override
   void dispose() {
-    controller.dispose();
+    this.widget.controller.dispose();
     super.dispose();
   }
 
@@ -69,17 +53,15 @@ class _FlutterCameraOverlayState extends State<CameraOverlay> {
           ),
         );
 
-    if (!controller.value.isInitialized) {
+    if (!this.widget.controller.value.isInitialized) {
       return loadingWidget;
     }
 
-    controller
-        .setFlashMode(widget.flash == true ? FlashMode.auto : FlashMode.off);
     return Stack(
       alignment: Alignment.bottomCenter,
       fit: StackFit.expand,
       children: [
-        CameraPreview(controller),
+        CameraPreview(this.widget.controller),
         OverlayShape(widget.model),
         if (widget.label != null || widget.info != null)
           Align(
@@ -127,7 +109,7 @@ class _FlutterCameraOverlayState extends State<CameraOverlay> {
                           await HapticFeedback.vibrate();
                         }
 
-                        XFile file = await controller.takePicture();
+                        XFile file = await this.widget.controller.takePicture();
                         widget.onCapture(file);
                       },
                       icon: const Icon(
