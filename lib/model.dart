@@ -13,6 +13,7 @@ enum OverlayFormat {
   ///SIM cards
   simID000
 }
+
 enum OverlayOrientation { landscape, portrait }
 
 abstract class OverlayModel {
@@ -24,12 +25,15 @@ abstract class OverlayModel {
 
   ///natural orientation for overlay
   OverlayOrientation? orientation;
+
+  double? widthRatio;
 }
 
 class CardOverlay implements OverlayModel {
   CardOverlay(
       {this.ratio = 1.5,
       this.cornerRadius = 0.66,
+      this.widthRatio = 0.9,
       this.orientation = OverlayOrientation.landscape});
 
   @override
@@ -38,6 +42,8 @@ class CardOverlay implements OverlayModel {
   double? cornerRadius;
   @override
   OverlayOrientation? orientation;
+  @override
+  double? widthRatio;
 
   static byFormat(OverlayFormat format) {
     switch (format) {

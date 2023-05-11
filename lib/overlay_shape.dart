@@ -10,13 +10,14 @@ class OverlayShape extends StatelessWidget {
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context);
     var size = media.size;
-    double ratio = model.ratio as double;
+    var ratio = model.ratio as double;
+    var wRatio = model.widthRatio as double;
 
-    double width = size.shortestSide * .9;
+    double width = size.shortestSide * wRatio;
     double height = width / ratio;
 
     if (model.orientation == OverlayOrientation.landscape) {
-      height = size.longestSide * .9;
+      height = size.longestSide * wRatio;
       width = height / ratio;
     }
 
