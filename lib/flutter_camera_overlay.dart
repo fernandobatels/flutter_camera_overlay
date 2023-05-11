@@ -57,42 +57,54 @@ class _FlutterCameraOverlayState extends State<CameraOverlay> {
       return loadingWidget;
     }
 
+    Widget? infoWidget;
+
+    if (widget.label != null || widget.info != null) {
+      infoWidget = Align(
+        alignment: Alignment.topCenter,
+        child: Container(
+            margin: widget.infoMargin ??
+                const EdgeInsets.only(top: 100, left: 20, right: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (widget.label != null)
+                  Text(
+                    widget.label!,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700),
+                  ),
+                if (widget.info != null)
+                  Flexible(
+                    child: Text(
+                      widget.info!,
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+              ],
+            )),
+      );
+
+      if (this.widget.model.orientation == OverlayOrientation.landscape) {
+        infoWidget = new RotatedBox(quarterTurns: 1, child: infoWidget);
+      }
+    }
+
     return Stack(
       alignment: Alignment.bottomCenter,
       fit: StackFit.expand,
       children: [
         CameraPreview(this.widget.controller),
         OverlayShape(widget.model),
-        if (widget.label != null || widget.info != null)
-          Align(
-            alignment: Alignment.topCenter,
-            child: Container(
-                margin: widget.infoMargin ??
-                    const EdgeInsets.only(top: 100, left: 20, right: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (widget.label != null)
-                      Text(
-                        widget.label!,
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.w700),
-                      ),
-                    if (widget.info != null)
-                      Flexible(
-                        child: Text(
-                          widget.info!,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ),
-                  ],
-                )),
-          ),
+        if (infoWidget != null) infoWidget!,
         if (widget.enableCaptureButton)
           Align(
-            alignment: Alignment.bottomCenter,
+            alignment:
+                this.widget.model.orientation == OverlayOrientation.landscape
+                    ? Alignment.bottomLeft
+                    : Alignment.bottomCenter,
             child: Material(
                 color: Colors.transparent,
                 child: Container(
@@ -100,7 +112,10 @@ class _FlutterCameraOverlayState extends State<CameraOverlay> {
                       color: Colors.black12,
                       shape: BoxShape.circle,
                     ),
-                    margin: const EdgeInsets.all(25),
+                    margin: this.widget.model.orientation ==
+                            OverlayOrientation.landscape
+                        ? EdgeInsets.only(bottom: 70, left: 25)
+                        : EdgeInsets.all(25),
                     child: IconButton(
                       enableFeedback: true,
                       color: Colors.white,

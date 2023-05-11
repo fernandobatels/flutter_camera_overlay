@@ -16,7 +16,7 @@ class OverlayShape extends StatelessWidget {
     double height = width / ratio;
 
     if (model.orientation == OverlayOrientation.landscape) {
-      height = size.longestSide * .7;
+      height = size.longestSide * .9;
       width = height / ratio;
     }
 
