@@ -33,6 +33,7 @@ class CameraOverlay extends StatefulWidget {
 
 class _FlutterCameraOverlayState extends State<CameraOverlay> {
   _FlutterCameraOverlayState();
+  bool _capturing = false;
 
   @override
   void dispose() {
@@ -124,8 +125,16 @@ class _FlutterCameraOverlayState extends State<CameraOverlay> {
                           await HapticFeedback.vibrate();
                         }
 
+                        if (this._capturing) {
+                          return;
+                        }
+
+                        this._capturing = true;
+
                         XFile file = await this.widget.controller.takePicture();
                         widget.onCapture(file);
+
+                        this._capturing = false;
                       },
                       icon: const Icon(
                         Icons.camera,
